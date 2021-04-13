@@ -56,10 +56,13 @@ CharLiteralChar = {InputCharacter} | {EscapeSequence} | (\\ {WhitespaceChar})
 CharLiteral = \$ {CharLiteralChar} | \$
 
 /* Without the \\\" at the start the lexer won't find it, for unknown reasons */
-ESC = "\\" ( [^] )
-CHAR = {ESC} | [^\'\"\\]
-STRING_BAD1 = \" ({CHAR} | \') *
-StringLiteral = {STRING_BAD1} \"
+StringLiteral_Char1 = [^\"\\$]
+StringLiteral_EscapedNonQuote = \\ [^\"]
+
+// Allow any non ", non \ character; You Allow escaped '"'; Allow escaped <any non '"'>
+StringLiteral_Char = {StringLiteral_Char1} | "\\\""
+    | {StringLiteral_EscapedNonQuote}
+StringLiteral = \" ({StringLiteral_Char} *) \"
 
 NameChar = {ErlangLetter} | {ErlangDigit} | @ | _
 NameChars = {NameChar}*
